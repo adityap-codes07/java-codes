@@ -1,26 +1,19 @@
 **Number Guessing Game (Java Edition)**
 ->Summary
 This is a traditional command-line Number Guessing Game written in Java. The application picks a random integer within an interval supplied by the user, and the player has seven attempts to find out the number.
-
 It is a great, low-key project to demonstrate fundamental Java principles, such as:
-
 Employing the Scanner class for solid user input.
-
 How to implement the Random class in order to make random integers.
-
 Using while loops and conditional statements (if/else if/else) for the flow of the game and offering hints.
 
 **Requirements**
 To build and run this Java program, you will need to have the following installed:
-
 Java Development Kit (JDK): Version 8 or later.
 
 **Getting Started**
 These steps will guide you through compiling and running the game from your command line.
-
 1. Save the Code
 Save the following Java code into a file called GuessingGame.java.
-
 2. Compile the Program
 Open your command line or terminal and go to the directory where you downloaded the file. Compile the Java code (javac):
 
