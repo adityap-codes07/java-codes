@@ -27,3 +27,12 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+*.iml
+*.html
+*.kts
+prime
+tjy
+yo
+yui
