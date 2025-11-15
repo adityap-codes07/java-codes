@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Career Compass - Your Personalized Career Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .quiz-card { transition: all 0.3s ease; }
+        .quiz-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .progress-bar { transition: width 0.5s ease; }
+        .fade-in { animation: fadeIn 0.6s ease-in; }
+        @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+        .chat-bubble { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+        .typing-indicator { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+        .chat-container { height:400px; overflow-y:auto; }
+        .chat-container::-webkit-scrollbar { width:6px; }
+        .chat-container::-webkit-scrollbar-track { background:#f1f1f1; border-radius:10px; }
+        .chat-container::-webkit-scrollbar-thumb { background:#c1c1c1; border-radius:10px; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Header -->
+<header class="gradient-bg text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-2">🧭 Career Compass</h1>
+        <p class="text-xl opacity-90">Discover Your Perfect Career Path with AI</p>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-8">
+    <!-- Welcome Section -->
+    <div id="welcomeSection" class="text-center mb-12 fade-in">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Find Your Ideal Career</h2>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Take our comprehensive aptitude test to discover careers that match your interests and skills.
+            We'll also show you government colleges in your area for your chosen field.
+        </p>
+        <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors">
+            Get Started 🚀
+        </button>
+    </div>
+
+    <!-- Student Details Form -->
+    <div id="detailsSection" class="hidden mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 max-w-lg mx-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">👨‍🎓 Student Details</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Class *</label>
+                    <select id="studentClass" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select your class</option>
+                        <option value="10th">Class 10th</option>
+                        <option value="12th">Class 12th</option>
+                        <option value="Graduate">Graduate</option>
+                        <option value="Post-Graduate">Post Graduate</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">State *</label>
+                    <select id="studentState" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select your state/territory</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="proceedToQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold mt-6 transition-colors">
+                Continue to Quiz
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quizSection" class="hidden">
+        <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-600">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></span>
+                    <span class="text-sm font-medium text-gray-600"><span id="progressPercent">10</span>% Complete</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progressBar" class="progress-bar bg-blue-600 h-2 rounded-full" style="width: 10%"></div>
+                </div>
+            </div>
+            <div id="questionContainer" class="mb-8">
+                <h3 id="questionText" class="text-xl font-semibold text-gray-800 mb-6">Loading question...</h3>
+                <div id="optionsContainer" class="space-y-3"></div>
+            </div>
+            <div class="flex justify-between">
+                <button id="prevBtn" onclick="previousQuestion()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors" disabled>
+                    Previous
+                </button>
+                <button id="nextBtn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors" disabled>
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="hidden">
+        <div class="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">🎉 Your Career Recommendations</h3>
+            <div id="resultsContent"></div>
+            <div class="text-center mt-8">
+                <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors mr-4">
+                    Take Quiz Again
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Chatbot -->
+<div id="chatbotWidget" class="fixed bottom-6 right-6 z-50">
+    <!-- Toggle Button -->
+    <button onclick="toggleChatbot()" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg focus:outline-none">
+        💬
+    </button>
+    <!-- Chat Window -->
+    <div id="chatWindow" class="hidden w-80 bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
+        <div class="gradient-bg text-white p-4 flex justify-between items-center">
+            <h4 class="font-semibold">CareerBot</h4>
+            <button onclick="toggleChatbot()" class="text-white">✖</button>
+        </div>
+        <div id="chatMessages" class="chat-container p-4 space-y-3"></div>
+        <form id="chatForm" class="p-3 border-t border-gray-200 flex items-center space-x-2">
+            <input id="chatInput" type="text" placeholder="Ask me about careers..." class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Send</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    /* ---------------- Quiz Data ---------------- */
+    const quizQuestions = [
+      { question: "What type of activities do you enjoy most?",
+        options: [
+          { text: "Working with computers and technology", category: "technology" },
+          { text: "Helping and caring for people", category: "healthcare" },
+          { text: "Creating art, music, or writing", category: "creative" },
+          { text: "Working with numbers and data", category: "analytical" }
+        ]},
+      { question: "Which environment would you prefer to work in?",
+        options: [
+          { text: "Office with latest technology", category: "technology" },
+          { text: "Hospital or clinic", category: "healthcare" },
+          { text: "Studio or creative space", category: "creative" },
+          { text: "Corporate office or bank", category: "analytical" }
+        ]},
+      { question: "What motivates you the most?",
+        options: [
+          { text: "Solving complex problems", category: "technology" },
+          { text: "Making a difference in people's lives", category: "healthcare" },
+          { text: "Expressing creativity and ideas", category: "creative" },
+          { text: "Achieving financial success", category: "analytical" }
+        ]},
+      { question: "Which subject did you enjoy most in school?",
+        options: [
+          { text: "Mathematics and Science", category: "technology" },
+          { text: "Biology and Chemistry", category: "healthcare" },
+          { text: "Literature and Arts", category: "creative" },
+          { text: "Economics and Business Studies", category: "analytical" }
+        ]},
+      { question: "How do you prefer solving problems?",
+        options: [
+          { text: "Using logic and coding", category: "technology" },
+          { text: "By empathizing and helping others", category: "healthcare" },
+          { text: "By thinking outside the box", category: "creative" },
+          { text: "By analyzing data and trends", category: "analytical" }
+        ]},
+      { question: "What kind of work style suits you?",
+        options: [
+          { text: "Fast-paced and innovative", category: "technology" },
+          { text: "Calm and service-oriented", category: "healthcare" },
+          { text: "Flexible and expressive", category: "creative" },
+          { text: "Structured and goal-oriented", category: "analytical" }
+        ]},
+      { question: "Which skill describes you best?",
+        options: [
+          { text: "Technical and logical", category: "technology" },
+          { text: "Compassionate and caring", category: "healthcare" },
+          { text: "Imaginative and artistic", category: "creative" },
+          { text: "Detail-oriented and organized", category: "analytical" }
+        ]},
+      { question: "What excites you more?",
+        options: [
+          { text: "Building new apps/software", category: "technology" },
+          { text: "Saving lives or improving health", category: "healthcare" },
+          { text: "Designing visuals or performing arts", category: "creative" },
+          { text: "Managing businesses or finances", category: "analytical" }
+        ]},
+      { question: "How do you like working in a team?",
+        options: [
+          { text: "Collaborating on technical projects", category: "technology" },
+          { text: "Supporting patients and staff", category: "healthcare" },
+          { text: "Brainstorming creative ideas", category: "creative" },
+          { text: "Coordinating tasks and reports", category: "analytical" }
+        ]},
+      { question: "What would you choose as a dream achievement?",
+        options: [
+          { text: "Inventing cutting-edge technology", category: "technology" },
+          { text: "Becoming a top doctor/nurse", category: "healthcare" },
+          { text: "Winning an award for art/music", category: "creative" },
+          { text: "Becoming a successful CEO/analyst", category: "analytical" }
+        ]}
+    ];
+
+    /* ---------------- Chatbot Logic ---------------- */
+    function toggleChatbot() {
+      document.getElementById("chatWindow").classList.toggle("hidden");
+    }
+
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+    const chatMessages = document.getElementById("chatMessages");
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const userMsg = chatInput.value.trim();
+      if (!userMsg) return;
+      addMessage(userMsg, "user");
+      chatInput.value = "";
+      setTimeout(() => addMessage(getBotResponse(userMsg), "bot"), 800);
+    });
+
+    function addMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("chat-bubble", "p-2", "rounded-lg", "max-w-xs");
+      if (sender === "user") {
+        msg.classList.add("bg-blue-100", "self-end", "ml-auto");
+      } else {
+        msg.classList.add("bg-gray-200", "self-start", "mr-auto");
+      }
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getBotResponse(input) {
+      input = input.toLowerCase();
+      if (input.includes("career") || input.includes("job")) {
+        return "You can explore Technology, Healthcare, Creative, or Analytical careers. Want me to suggest colleges too?";
+      }
+      if (input.includes("college")) {
+        return "I can recommend government colleges based on your state and career choice.";
+      }
+      if (input.includes("hello") || input.includes("hi")) {
+        return "Hello 👋! Ask me anything about careers or colleges.";
+      }
+      return "I'm here to guide you about careers, colleges, and opportunities. Try asking about jobs or courses.";
+    }
+</script>
+</body>
+</html>
